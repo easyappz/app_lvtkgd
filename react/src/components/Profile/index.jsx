@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { getProfile, updateProfile } from '../../api/profile/retrieve.js';
+import { getProfile } from '../../api/profile/retrieve.js';
+import { updateProfile } from '../../api/profile/update.js';
 import { getMe } from '../../api/auth/me.js';
 
 const Profile = () => {
