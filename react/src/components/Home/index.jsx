@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getPosts, createPost, toggleLike, createComment } from '../../api/posts/list.js';
+import { getPosts } from '../../api/posts/list.js';
+import { createPost } from '../../api/posts/create.js';
+import { toggleLike } from '../../api/posts/like.js';
+import { createComment } from '../../api/posts/comment.js';
 import { getMe } from '../../api/auth/me.js';
 
 const Home = () => {
