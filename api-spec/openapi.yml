@@ -182,14 +182,14 @@ components:
         error:
           type: string
 paths:
-  /auth/register:
-    $ref: './paths/auth.yml#/paths/~1auth~1register'
-  /auth/login:
-    $ref: './paths/auth.yml#/paths/~1auth~1login'
-  /auth/logout:
-    $ref: './paths/auth.yml#/paths/~1auth~1logout'
-  /auth/me:
-    $ref: './paths/auth.yml#/paths/~1auth~1me'
+  /api/auth/register:
+    $ref: './paths/auth.yml#/paths/~1api~1auth~1register'
+  /api/auth/login:
+    $ref: './paths/auth.yml#/paths/~1api~1auth~1login'
+  /api/auth/logout:
+    $ref: './paths/auth.yml#/paths/~1api~1auth~1logout'
+  /api/auth/me:
+    $ref: './paths/auth.yml#/paths/~1api~1auth~1me'
   /posts/:
     $ref: './paths/posts.yml#/paths/~1posts~1'
   /posts/{id}:
