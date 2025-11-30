@@ -5,10 +5,11 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import PageNumberPagination
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Max, Prefetch
 from django.utils import timezone
+from django.db.models import Subquery
 
 from .models import *
 from .serializers import *
@@ -35,18 +36,23 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            user = authenticate(
-                request,
-                username=serializer.validated_data['username'],
-                password=serializer.validated_data['password'],
-            )
-            if user:
-                login(request, user)
-                return Response({"message": "Logged in successfully"})
-            return Response(
-                {"detail": "Invalid credentials"},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+            try:
+                member = Member.objects.get(username=username, is_active=True)
+                if member.check_password(password):
+                    login(request, member)
+                    return Response({"message": "Logged in successfully"})
+                else:
+                    return Response(
+                        {"detail": "Invalid credentials"},
+                        status=status.HTTP_401_UNAUTHORIZED,
+                    )
+            except Member.DoesNotExist:
+                return Response(
+                    {"detail": "Invalid credentials"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -72,11 +78,15 @@ class PostsListCreateView(ListCreateAPIView):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        friends_q = (
-            Q(author__friendships__status=Friendship.STATUS_ACCEPTED, author__friendships__from_member=self.request.user) |
-            Q(author__friendships__status=Friendship.STATUS_ACCEPTED, author__friendships__to_member=self.request.user)
+        user = self.request.user
+        qs_sent = Member.objects.filter(
+            id__in=user.sent_requests.filter(status=Friendship.STATUS_ACCEPTED).values_list('to_member_id', flat=True)
         )
-        return Post.objects.filter(friends_q | Q(author=self.request.user)).prefetch_related('author').order_by('-created_at')
+        qs_received = Member.objects.filter(
+            id__in=user.received_requests.filter(status=Friendship.STATUS_ACCEPTED).values_list('from_member_id', flat=True)
+        )
+        friends = (qs_sent | qs_received).distinct()
+        return Post.objects.filter(Q(author__in=friends) | Q(author=user)).prefetch_related('author').order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -133,11 +143,13 @@ class FriendsView(APIView):
 
     def get(self, request, username):
         member = get_object_or_404(Member, username=username)
-        friends_q = (
-            Q(friendships__status=Friendship.STATUS_ACCEPTED, friendships__from_member=member) |
-            Q(friendships__status=Friendship.STATUS_ACCEPTED, friendships__to_member=member)
+        qs_sent = Member.objects.filter(
+            id__in=member.sent_requests.filter(status=Friendship.STATUS_ACCEPTED).values_list('to_member_id', flat=True)
         )
-        friends_qs = Member.objects.filter(friends_q).distinct().order_by('username')
+        qs_received = Member.objects.filter(
+            id__in=member.received_requests.filter(status=Friendship.STATUS_ACCEPTED).values_list('from_member_id', flat=True)
+        )
+        friends_qs = (qs_sent | qs_received).distinct().exclude(id=member.id).order_by('username')
         paginator = CustomPagination()
         page = paginator.paginate_queryset(friends_qs, request)
         if page is None:
