@@ -24,6 +24,19 @@ class Member(models.Model):
     def has_module_perms(self, app_label):
         return False
 
+    def check_password(self, raw_password):
+        from django.contrib.auth.hashers import check_password
+        return check_password(raw_password, self.password)
+
+    def get_session_auth_hash(self):
+        from django.contrib.auth.hashers import salted_hmac
+        key_salt = f"django.contrib.auth.Member.{self.pk}"
+        return salted_hmac(
+            "get_session_auth_hash",
+            self.password,
+            key_salt,
+        ).hexdigest()
+
     def __str__(self):
         return self.username
 

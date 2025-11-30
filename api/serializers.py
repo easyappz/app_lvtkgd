@@ -25,6 +25,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
 
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=30)
+    password = serializers.CharField(write_only=True)
+
 class ProfileSerializer(MemberSerializer):
     friends_count = serializers.SerializerMethodField()
 
