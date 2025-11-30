@@ -1,0 +1,128 @@
+paths:
+  /posts/:
+    get:
+      tags:
+        - posts
+      summary: Get news feed posts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Paginated list of posts
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/PaginatedPostList'
+      'x-isSecure': true
+    post:
+      tags:
+        - posts
+      summary: Create new post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  maxLength: 10000
+                media_urls:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 10
+              required:
+                - content
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Post'
+      'x-isSecure': true
+  /posts/{id}:
+    get:
+      tags:
+        - posts
+      summary: Get specific post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post details
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Post'
+        '404':
+          description: Post not found
+      'x-isSecure': false
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+  /posts/{id}/like:
+    post:
+      tags:
+        - posts
+      summary: Toggle like on post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Like toggled
+      'x-isSecure': true
+  /posts/{id}/comment:
+    post:
+      tags:
+        - posts
+      summary: Add comment to post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  maxLength: 5000
+              required:
+                - text
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Comment'
+      'x-isSecure': true

@@ -1,0 +1,59 @@
+paths:
+  /profile/{username}:
+    get:
+      tags:
+        - profile
+      summary: Get user profile
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Member profile
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Member'
+        '404':
+          description: Profile not found
+      'x-isSecure': false
+    patch:
+      tags:
+        - profile
+      summary: Update user profile
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  nullable: true
+                avatar:
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Member'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      'x-isSecure': true

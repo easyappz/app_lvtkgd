@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: Social Network API (VK-like)
+  description: OpenAPI specification for the social network application similar to VK.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
+  schemas:
+    Member:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        avatar:
+          type: string
+          nullable: true
+        last_seen:
+          type: string
+          format: date-time
+          nullable: true
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        content:
+          type: string
+        media_urls:
+          type: array
+          items:
+            type: string
+        author:
+          $ref: '#/components/schemas/Member'
+        likes_count:
+          type: integer
+          format: int32
+        comments_count:
+          type: integer
+          format: int32
+        created_at:
+          type: string
+          format: date-time
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        text:
+          type: string
+        author:
+          $ref: '#/components/schemas/Member'
+        post_id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+    MessagePreview:
+      type: object
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        author:
+          type: object
+          properties:
+            id:
+              type: integer
+            username:
+              type: string
+            avatar:
+              type: string
+              nullable: true
+    Chat:
+      type: object
+      properties:
+        id:
+          type: integer
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+        last_message:
+          $ref: '#/components/schemas/MessagePreview'
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        chat_id:
+          type: integer
+        author:
+          $ref: '#/components/schemas/Member'
+        text:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    PaginatedPostList:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+    PaginatedChats:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chat'
+    PaginatedMessages:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+    PaginatedFriends:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+paths:
+  /auth/register:
+    $ref: './paths/auth.yml#/paths/~1auth~1register'
+  /auth/login:
+    $ref: './paths/auth.yml#/paths/~1auth~1login'
+  /auth/logout:
+    $ref: './paths/auth.yml#/paths/~1auth~1logout'
+  /auth/me:
+    $ref: './paths/auth.yml#/paths/~1auth~1me'
+  /posts/:
+    $ref: './paths/posts.yml#/paths/~1posts~1'
+  /posts/{id}:
+    $ref: './paths/posts.yml#/paths/~1posts~1{id}'
+  /posts/{id}/like:
+    $ref: './paths/posts.yml#/paths/~1posts~1{id}~1like'
+  /posts/{id}/comment:
+    $ref: './paths/posts.yml#/paths/~1posts~1{id}~1comment'
+  /profile/{username}:
+    $ref: './paths/profile.yml#/paths/~1profile~1{username}'
+  /friends/{username}:
+    $ref: './paths/friends.yml#/paths/~1friends~1{username}'
+  /friends/{username}/request:
+    $ref: './paths/friends.yml#/paths/~1friends~1{username}~1request'
+  /friends/{username}/accept/{request_id}:
+    $ref: './paths/friends.yml#/paths/~1friends~1{username}~1accept~1{request_id}'
+  /friends/{username}/{friend_username}:
+    $ref: './paths/friends.yml#/paths/~1friends~1{username}~1{friend_username}'
+  /messages/chats:
+    $ref: './paths/messages.yml#/paths/~1messages~1chats'
+  /messages/chat/{chat_id}:
+    $ref: './paths/messages.yml#/paths/~1messages~1chat~1{chat_id}'
+  /messages/chat/{chat_id}/send:
+    $ref: './paths/messages.yml#/paths/~1messages~1chat~1{chat_id}~1send'
+  /member/{id}/last_seen:
+    $ref: './paths/messages.yml#/paths/~1member~1{id}~1last_seen'

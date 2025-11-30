@@ -1,0 +1,107 @@
+paths:
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register new member
+      description: Creates a new member account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 30
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '201':
+          description: Member created
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Member'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Error'
+        '409':
+          description: Conflict (username or email exists)
+      'x-isSecure': false
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login member
+      description: Authenticates member and sets HttpOnly cookie.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Logged in successfully
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Error'
+      'x-isSecure': false
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      summary: Logout member
+      description: Clears the session cookie.
+      responses:
+        '204':
+          description: Logged out successfully
+      'x-isSecure': true
+  /auth/me:
+    get:
+      tags:
+        - auth
+      summary: Get current member profile
+      responses:
+        '200':
+          description: Current member
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Member'
+        '401':
+          description: Unauthorized
+      'x-isSecure': true

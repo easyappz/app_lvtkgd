@@ -1,0 +1,100 @@
+paths:
+  /messages/chats:
+    get:
+      tags:
+        - messages
+      summary: Get list of chats
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Paginated chats
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/PaginatedChats'
+      'x-isSecure': true
+  /messages/chat/{chat_id}:
+    get:
+      tags:
+        - messages
+      summary: Get messages in chat
+      parameters:
+        - name: chat_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: Paginated messages
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/PaginatedMessages'
+      'x-isSecure': true
+  /messages/chat/{chat_id}/send:
+    post:
+      tags:
+        - messages
+      summary: Send message in chat
+      parameters:
+        - name: chat_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  maxLength: 5000
+              required:
+                - text
+      responses:
+        '201':
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/Message'
+      'x-isSecure': true
+  /member/{id}/last_seen:
+    put:
+      tags:
+        - messages
+      summary: Update member last seen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Last seen updated
+      'x-isSecure': true

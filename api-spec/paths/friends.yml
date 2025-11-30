@@ -1,0 +1,103 @@
+paths:
+  /friends/{username}:
+    get:
+      tags:
+        - friends
+      summary: Get friends list
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Paginated friends
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/PaginatedFriends'
+      'x-isSecure': false
+    post:
+      tags:
+        - friends
+      summary: Send friend request
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_username:
+                  type: string
+              required:
+                - target_username
+      responses:
+        '201':
+          description: Friend request sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Friend request sent
+      'x-isSecure': true
+  /friends/{username}/accept/{request_id}:
+    post:
+      tags:
+        - friends
+      summary: Accept friend request
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: request_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Request accepted
+      'x-isSecure': true
+  /friends/{username}/{friend_username}:
+    delete:
+      tags:
+        - friends
+      summary: Remove friend
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: friend_username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Friend removed
+      'x-isSecure': true
