@@ -34,8 +34,7 @@ class ProfileSerializer(MemberSerializer):
 
     def get_friends_count(self, obj):
         return Friendship.objects.filter(
-            status=Friendship.STATUS_ACCEPTED,
-            Q(from_member=obj) | Q(to_member=obj)
+            Q(status=Friendship.STATUS_ACCEPTED, from_member=obj) | Q(status=Friendship.STATUS_ACCEPTED, to_member=obj)
         ).count()
 
 class PostSerializer(serializers.ModelSerializer):
