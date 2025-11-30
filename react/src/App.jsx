@@ -79,11 +79,9 @@ function AppContent() {
 
 const App = () => (
   <ErrorBoundary>
-    <BrowserRouter>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </BrowserRouter>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   </ErrorBoundary>
 );
 
