@@ -5,6 +5,11 @@ import { toggleLike } from '../../api/posts/like.js';
 import { createComment } from '../../api/posts/comment.js';
 import { getMe } from '../../api/auth/me.js';
 
+const getInitials = (username) => {
+  if (!username || typeof username !== 'string' || username.trim() === '') return '?';
+  return username.trim().charAt(0).toUpperCase();
+};
+
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,10 +82,6 @@ const Home = () => {
     return (now - seen) < 5 * 60 * 1000;
   };
 
-  const getInitials = (username) => {
-    return username.charAt(0).toUpperCase();
-  };
-
   if (loading) {
     return (
       <div data-easytag='id2-src/components/Home/index.jsx' style={{ padding: '2rem', textAlign: 'center' }}>
@@ -146,8 +147,8 @@ const Home = () => {
                   width: '40px',
                   height: '40px',
                   borderRadius: '50%',
-                  background: post.author.avatar ? `url(${post.author.avatar}) center/cover` : '#e4e6ea',
-                  color: post.author.avatar ? 'transparent' : 'white',
+                  background: post.author?.avatar ? `url(${post.author.avatar}) center/cover` : '#e4e6ea',
+                  color: post.author?.avatar ? 'transparent' : 'white',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -155,15 +156,15 @@ const Home = () => {
                   fontSize: '16px',
                 }}
               >
-                {!post.author.avatar && getInitials(post.author.username)}
+                {!post.author?.avatar && getInitials(post.author?.username)}
               </div>
               <div>
-                <div style={{ fontWeight: '600', fontSize: '14px' }}>{post.author.username}</div>
+                <div style={{ fontWeight: '600', fontSize: '14px' }}>{post.author?.username || 'Unknown'}</div>
                 <div style={{ fontSize: '12px', color: '#65676b' }}>
-                  {new Date(post.created_at).toLocaleString('ru-RU')}
+                  {post.created_at ? new Date(post.created_at).toLocaleString('ru-RU') : 'Неизвестно'}
                 </div>
               </div>
-              {isOnline(post.author.last_seen) && (
+              {post.author?.last_seen && isOnline(post.author.last_seen) && (
                 <div
                   style={{
                     width: '8px',
@@ -220,7 +221,7 @@ const Home = () => {
                   gap: '0.25rem',
                 }}
               >
-                👍 {post.likes_count}
+                👍 {post.likes_count || 0}
               </button>
               <button
                 style={{
@@ -231,7 +232,7 @@ const Home = () => {
                   cursor: 'pointer',
                 }}
               >
-                💬 {post.comments_count}
+                💬 {post.comments_count || 0}
               </button>
             </div>
           </div>

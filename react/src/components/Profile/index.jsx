@@ -4,6 +4,11 @@ import { getProfile } from '../../api/profile/retrieve.js';
 import { updateProfile } from '../../api/profile/update.js';
 import { getMe } from '../../api/auth/me.js';
 
+const getInitials = (username) => {
+  if (!username || typeof username !== 'string' || username.trim() === '') return '?';
+  return username.trim().charAt(0).toUpperCase();
+};
+
 const Profile = () => {
   const { username } = useParams();
   const [profile, setProfile] = useState(null);
@@ -95,11 +100,11 @@ const Profile = () => {
             color: profile.avatar ? 'transparent' : '#65676b',
           }}
         >
-          {!profile.avatar && profile.username.charAt(0).toUpperCase()}
+          {!profile.avatar && getInitials(profile.username)}
         </div>
         <h1 style={{ fontSize: '28px', margin: '0 0 0.5rem', color: '#1c1e21' }}>{profile.username}</h1>
         <div style={{ color: '#65676b', marginBottom: '1rem' }}>
-          {new Date(profile.last_seen).toLocaleString('ru-RU')}
+          {profile.last_seen ? new Date(profile.last_seen).toLocaleString('ru-RU') : 'Неизвестно'}
         </div>
         {isOwnProfile && (
           <button

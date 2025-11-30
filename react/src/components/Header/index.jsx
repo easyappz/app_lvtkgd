@@ -1,11 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+
+const getInitials = (username) => {
+  if (!username || typeof username !== 'string' || username.trim() === '') return '?';
+  return username.trim().charAt(0).toUpperCase();
+};
 
 const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [userMenuOpen, setUserMenuOpen] = React.useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -15,10 +20,6 @@ const Header = () => {
 
   const toggleSidebar = () => {
     document.body.classList.toggle('sidebar-open');
-  };
-
-  const getInitials = (username) => {
-    return username.charAt(0).toUpperCase();
   };
 
   useEffect(() => {

@@ -46,9 +46,12 @@ const Messages = () => {
   };
 
   const getInitials = (name) => {
-    if (!name) return '?';
+    if (!name || typeof name !== 'string' || name.trim() === '') return '?';
     const words = name.trim().split(' ');
-    return words[0][0].toUpperCase() + (words[1] ? words[1][0].toUpperCase() : '');
+    if (words.length === 0) return '?';
+    const first = words[0][0]?.toUpperCase() || '?';
+    const second = words[1]?.[0]?.toUpperCase() || '';
+    return first + second;
   };
 
   const Avatar = ({ name, size = 40, isOnline: online }) => (
@@ -194,7 +197,7 @@ const Messages = () => {
   };
 
   return (
-    <div data-easytag='id4-Messages' style={containerStyle}>
+    <div data-easytag='id4-src/components/Messages/index.jsx' style={containerStyle}>
       {/* Sidebar - Chats */}
       <div style={sidebarStyle}>
         <div
