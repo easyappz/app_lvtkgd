@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.crypto import salted_hmac
 
 class Member(models.Model):
     username = models.CharField(max_length=30, unique=True)
@@ -29,13 +30,8 @@ class Member(models.Model):
         return check_password(raw_password, self.password)
 
     def get_session_auth_hash(self):
-        from django.contrib.auth.hashers import salted_hmac
-        key_salt = f"django.contrib.auth.Member.{self.pk}"
-        return salted_hmac(
-            "get_session_auth_hash",
-            self.password,
-            key_salt,
-        ).hexdigest()
+        key_salt = f"django.contrib.auth.{self.__module__}.{self.__class__.__name__}"
+        return salted_hmac(key_salt, self.password).hexdigest()
 
     def __str__(self):
         return self.username
