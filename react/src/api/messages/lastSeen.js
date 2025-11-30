@@ -1,5 +1,5 @@
 import { instance } from '../axios.js';
 
 export const updateLastSeen = (id) => {
-  return instance.put(`/member/${id}/last_seen`);
+  return instance.put(`/api/member/${id}/last_seen/`);
 };
