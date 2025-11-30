@@ -40,6 +40,14 @@ class ProfileSerializer(MemberSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     author = MemberSerializer(read_only=True)
+    likes_count = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+
+    def get_comments_count(self, obj):
+        return obj.comments.count()
 
     class Meta:
         model = Post

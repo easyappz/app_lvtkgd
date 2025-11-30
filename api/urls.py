@@ -1,9 +1,38 @@
 from django.urls import path
-from .views import RegisterView, LoginView, LogoutView, MeView
+from .views import (
+    RegisterView,
+    LoginView,
+    LogoutView,
+    MeView,
+    PostsListCreateView,
+    PostDetailView,
+    PostLikeView,
+    PostCommentView,
+    ProfileView,
+    FriendsView,
+    AcceptFriendView,
+    RemoveFriendView,
+    MessagesChatsView,
+    ChatMessagesView,
+    SendMessageView,
+    UpdateLastSeenView
+)
 
 urlpatterns = [
     path('auth/register/', RegisterView.as_view(), name='auth_register'),
     path('auth/login/', LoginView.as_view(), name='auth_login'),
     path('auth/logout/', LogoutView.as_view(), name='auth_logout'),
     path('auth/me/', MeView.as_view(), name='auth_me'),
+    path('posts/', PostsListCreateView.as_view(), name='posts_list_create'),
+    path('posts/<int:id>/', PostDetailView.as_view(), name='post_detail'),
+    path('posts/<int:id>/like/', PostLikeView.as_view(), name='post_like'),
+    path('posts/<int:id>/comment/', PostCommentView.as_view(), name='post_comment'),
+    path('profile/<str:username>/', ProfileView.as_view(), name='profile'),
+    path('friends/<str:username>/', FriendsView.as_view(), name='friends'),
+    path('friends/<str:username>/accept/<int:request_id>/', AcceptFriendView.as_view(), name='accept_friend'),
+    path('friends/<str:username>/<str:friend_username>/', RemoveFriendView.as_view(), name='remove_friend'),
+    path('messages/chats/', MessagesChatsView.as_view(), name='messages_chats'),
+    path('messages/chat/<int:chat_id>/', ChatMessagesView.as_view(), name='chat_messages'),
+    path('messages/chat/<int:chat_id>/send/', SendMessageView.as_view(), name='send_message'),
+    path('member/<int:id>/last_seen/', UpdateLastSeenView.as_view(), name='update_last_seen'),
 ]

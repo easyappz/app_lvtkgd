@@ -78,6 +78,7 @@ class Friendship(models.Model):
         unique_together = ('from_member', 'to_member')
 
 class Chat(models.Model):
+    members = models.ManyToManyField(Member, related_name='chats')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -92,3 +93,11 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['created_at']
+
+class Like(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='post_likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('member', 'post')
