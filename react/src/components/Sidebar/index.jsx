@@ -1,68 +1,100 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { logout } from '../../api/auth/logout';
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Sidebar = () => {
-  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
+  const closeMobileSidebar = () => {
+    if (window.innerWidth < 768) {
+      document.body.classList.remove('sidebar-open');
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMobileSidebar();
   };
 
   return (
     <aside data-easytag='id6-src/components/Sidebar/index.jsx' className="sidebar">
       <nav>
         <ul>
-          <li>
-            <NavLink 
-              to="/" 
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Главная
-            </NavLink>
-          </li>
-          <li>
-            <NavLink 
-              to="/friends" 
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Друзья
-            </NavLink>
-          </li>
-          <li>
-            <NavLink 
-              to="/messages" 
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Сообщения
-            </NavLink>
-          </li>
-          <li>
-            <NavLink 
-              to="/profile/user1" 
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Профиль
-            </NavLink>
-          </li>
-          <li>
-            <NavLink 
-              to="/settings" 
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Настройки
-            </NavLink>
-          </li>
-          <li>
-            <button onClick={handleLogout}>
-              Выход
-            </button>
-          </li>
+          {user ? (
+            <>
+              <li>
+                <NavLink 
+                  to="/" 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={closeMobileSidebar}
+                >
+                  Лента
+                </NavLink>
+              </li>
+              <li>
+                <NavLink 
+                  to="/friends" 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={closeMobileSidebar}
+                >
+                  Друзья
+                </NavLink>
+              </li>
+              <li>
+                <NavLink 
+                  to="/messages" 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={closeMobileSidebar}
+                >
+                  Сообщения
+                </NavLink>
+              </li>
+              <li>
+                <NavLink 
+                  to={`/profile/${user.username}`} 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={closeMobileSidebar}
+                >
+                  Профиль
+                </NavLink>
+              </li>
+              <li>
+                <NavLink 
+                  to="/settings" 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={closeMobileSidebar}
+                >
+                  Настройки
+                </NavLink>
+              </li>
+              <li>
+                <button className="nav-link logout" onClick={handleLogout}>
+                  Выход
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink 
+                  to="/login" 
+                  className="nav-link"
+                  onClick={closeMobileSidebar}
+                >
+                  Войти
+                </NavLink>
+              </li>
+              <li>
+                <NavLink 
+                  to="/register" 
+                  className="nav-link"
+                  onClick={closeMobileSidebar}
+                >
+                  Регистрация
+                </NavLink>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </aside>

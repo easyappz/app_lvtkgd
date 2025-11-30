@@ -80,14 +80,14 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div data-easytag='id2-Home' style={{ padding: '2rem', textAlign: 'center' }}>
-        <div>Loading posts...</div>
+      <div data-easytag='id2-src/components/Home/index.jsx' style={{ padding: '2rem', textAlign: 'center' }}>
+        <div>Загрузка постов...</div>
       </div>
     );
   }
 
   return (
-    <div data-easytag='id2-Home' style={{ padding: '1rem', maxWidth: '800px', margin: '0 auto' }}>
+    <div data-easytag='id2-src/components/Home/index.jsx' style={{ padding: '1rem', maxWidth: '500px', margin: '0 auto' }}>
       {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
 
       {/* New Post Form */}
@@ -112,14 +112,16 @@ const Home = () => {
           type="submit"
           disabled={!newPostContent.trim()}
           style={{
-            background: '#5181b8',
+            background: '#4C75A0',
             color: 'white',
             border: 'none',
             padding: '0.5rem 1rem',
             borderRadius: '6px',
             cursor: newPostContent.trim() ? 'pointer' : 'not-allowed',
           }}
-        >Опубликовать</button>
+        >
+          Опубликовать
+        </button>
       </form>
 
       {/* Posts Feed */}
