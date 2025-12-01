@@ -91,24 +91,30 @@ const Home = () => {
   }
 
   return (
-    <div data-easytag='id2-src/components/Home/index.jsx' style={{ padding: '1rem', maxWidth: '500px', margin: '0 auto' }}>
+    <div data-easytag='id2-src/components/Home/index.jsx' style={{ padding: '1rem', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
       {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
 
       {/* New Post Form */}
       <form onSubmit={handleCreatePost} style={{ background: '#f0f2f5', padding: '1rem', borderRadius: '12px', marginBottom: '1rem' }}>
         <textarea
+          className='post-textarea'
           value={newPostContent}
           onChange={(e) => setNewPostContent(e.target.value)}
           placeholder="Что у вас нового?"
           style={{
             width: '100%',
             minHeight: '80px',
+            maxHeight: '120px',
             border: 'none',
             borderRadius: '8px',
             padding: '0.75rem',
             resize: 'vertical',
             fontSize: '14px',
+            fontFamily: 'inherit',
+            lineHeight: 1.4,
+            outline: 'none',
             background: 'white',
+            boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)',
             marginBottom: '0.5rem',
           }}
         />
