@@ -15,7 +15,10 @@ from .views import (
     MessagesChatsView,
     ChatMessagesView,
     SendMessageView,
-    UpdateLastSeenView
+    UpdateLastSeenView,
+    FriendsRequestsView,
+    FriendsRequestsRejectView,
+    FriendsSearchView
 )
 
 urlpatterns = [
@@ -31,6 +34,9 @@ urlpatterns = [
     path('friends/<str:username>/', FriendsView.as_view(), name='friends'),
     path('friends/<str:username>/accept/<int:request_id>/', AcceptFriendView.as_view(), name='accept_friend'),
     path('friends/<str:username>/<str:friend_username>/', RemoveFriendView.as_view(), name='remove_friend'),
+    path('friends/<str:username>/requests/', FriendsRequestsView.as_view(), name='friends_requests'),
+    path('friends/<str:username>/requests/<int:request_id>/', FriendsRequestsRejectView.as_view(), name='friends_requests_reject'),
+    path('friends/search/', FriendsSearchView.as_view(), name='friends_search'),
     path('messages/chats/', MessagesChatsView.as_view(), name='messages_chats'),
     path('messages/chat/<int:chat_id>/', ChatMessagesView.as_view(), name='chat_messages'),
     path('messages/chat/<int:chat_id>/send/', SendMessageView.as_view(), name='send_message'),

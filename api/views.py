@@ -243,3 +243,48 @@ class UpdateLastSeenView(UpdateAPIView):
         instance.last_seen = timezone.now()
         instance.save(update_fields=['last_seen'])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FriendsRequestsView(ListAPIView):
+    serializer_class = FriendshipListSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        member = get_object_or_404(Member, username=username)
+        if member != self.request.user:
+            raise PermissionDenied('Can only view your own friend requests.')
+        return member.received_requests.filter(
+            status=Friendship.STATUS_PENDING
+        ).order_by('-created_at')
+
+
+class FriendsRequestsRejectView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, username, request_id):
+        member = get_object_or_404(Member, username=username)
+        if member != request.user:
+            raise PermissionDenied('Can only reject your own friend requests.')
+        friendship = get_object_or_404(
+            Friendship,
+            id=request_id,
+            to_member=member,
+            status=Friendship.STATUS_PENDING
+        )
+        friendship.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FriendsSearchView(ListAPIView):
+    serializer_class = MemberSerializer
+    permission_classes = [AllowAny]
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        q = self.request.query_params.get('q', '')
+        qs = Member.objects.filter(username__icontains=q)
+        if self.request.user.is_authenticated:
+            qs = qs.exclude(id=self.request.user.id)
+        return qs.order_by('username')

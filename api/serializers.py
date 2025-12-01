@@ -98,3 +98,10 @@ class FriendshipSerializer(serializers.ModelSerializer):
         model = Friendship
         fields = ['id', 'from_member', 'to_member', 'status', 'created_at']
         read_only_fields = ['id', 'status', 'created_at']
+
+class FriendshipListSerializer(serializers.ModelSerializer):
+    from_member = MinimalMemberSerializer(read_only=True)
+
+    class Meta:
+        model = Friendship
+        fields = ['id', 'from_member', 'status', 'created_at']

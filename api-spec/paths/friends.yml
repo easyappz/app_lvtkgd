@@ -101,3 +101,80 @@ paths:
         '204':
           description: Friend removed
       'x-isSecure': true
+  /friends/{username}/requests/:
+    get:
+      tags:
+        - friends
+      summary: Get incoming pending friend requests
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Paginated incoming friend requests
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/PaginatedFriendshipList'
+      'x-isSecure': true
+  /friends/{username}/requests/{request_id}/:
+    delete:
+      tags:
+        - friends
+      summary: Reject incoming friend request
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: request_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Friend request rejected
+      'x-isSecure': true
+  /friends/search/:
+    get:
+      tags:
+        - friends
+      summary: Search users by username
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Paginated members
+          content:
+            application/json:
+              schema:
+                $ref: '../openapi.yml#/components/schemas/PaginatedMembers'
+      'x-isSecure': false
