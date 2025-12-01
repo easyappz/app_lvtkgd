@@ -8,6 +8,7 @@ class Member(models.Model):
     password = models.CharField(max_length=128)
     avatar = models.URLField(blank=True, null=True)
     last_seen = models.DateTimeField(default=timezone.now)
+    last_login = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

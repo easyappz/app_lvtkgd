@@ -72,8 +72,8 @@ INSTALLED_APPS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
     'api.backends.MemberBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 # REST Framework configuration

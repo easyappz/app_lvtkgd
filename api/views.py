@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import PageNumberPagination
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Max, Prefetch
 from django.utils import timezone
@@ -35,25 +35,15 @@ class LoginView(APIView):
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            username = serializer.validated_data['username']
-            password = serializer.validated_data['password']
-            try:
-                member = Member.objects.get(username=username, is_active=True)
-                if member.check_password(password):
-                    login(request, member)
-                    return Response({"message": "Logged in successfully"})
-                else:
-                    return Response(
-                        {"detail": "Invalid credentials"},
-                        status=status.HTTP_401_UNAUTHORIZED,
-                    )
-            except Member.DoesNotExist:
-                return Response(
-                    {"detail": "Invalid credentials"},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        user = authenticate(request, **serializer.validated_data)
+        if user:
+            login(request, user)
+            return Response({"message": "Logged in successfully"})
+        return Response(
+            {"detail": "Invalid credentials"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
 
 class LogoutView(APIView):
